@@ -7,6 +7,16 @@ ClasSOMfier: A neural network for cluster analysis and detection of lattice defe
     Created by Javier F. Troncoso, October 2020.
         Contact: javierfdeztroncoso@gmail.com
 
+
+    INSTALLATION:
+    
+      Option 1:
+        Use pip for Python3:
+            $ pip install classomfier
+            
+      Option 2:
+        Download the source code and build the package. Follow the instructions in file "install.sh". 
+    
     
     USE:
         
@@ -25,3 +35,10 @@ ClasSOMfier: A neural network for cluster analysis and detection of lattice defe
         The final configuration can be postprocessed so that it can be used again to find subcategories
         inside a specific category:
             >>nn.postprocess_output()
+            
+     
+    FUTURE WORK:
+        
+        -Application to large systems.
+        
+    In the case of doubts or problems, all questions are welcome. Open to new collaborations.
