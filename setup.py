@@ -13,6 +13,6 @@ setup(
    description='ClasSOMfier: A neural network for cluster analysis and detection of lattice defects',
    long_description=open('README.txt').read(),
    install_requires=[],
-   download_url="",
+   download_url="https://github.com/JaviFdezT/ClasSOMfier/archive/0.1.tar.gz",
    keywords = ['kohonen', 'neural', 'network', 'cluster', 'analysis'],
 )
