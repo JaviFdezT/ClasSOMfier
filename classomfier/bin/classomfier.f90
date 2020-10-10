@@ -20,6 +20,10 @@ PROGRAM ClasSOMfier
   ! !REQUIREMENTS:
   !      gfortran. At least, the compiler should be able to read 132 characters by line.
   !
+  ! !PROGRAM:
+  !  Matrices are used. Therefore, simulation boxes containing a large number of atoms cannot be analyzed.
+  !
+
 
 
 
@@ -162,10 +166,11 @@ SUBROUTINE writeinfo
     WRITE ( unit=output_unit, fmt='(a,t38,i17)'   ) 'Atoms:',          rows
     WRITE ( unit=output_unit, fmt='(a,t38,f17.5)'   ) 'Learning Rate:',          learning_rate
     WRITE ( unit=output_unit, fmt='(a,t38,f17.5)'   ) 'Sigma:',          sigma
+    WRITE ( unit=output_unit, fmt='(a,t42,a)'   ) 'Use for large systems:',       "Not activated" 
     if (pbc) then
-     WRITE ( unit=output_unit, fmt='(a,t51,a)'   ) 'Periodic Boundary Conitions:',       "True" 
+     WRITE ( unit=output_unit, fmt='(a,t51,a)'   ) 'Periodic Boundary Conditions:',       "True" 
     else
-     WRITE ( unit=output_unit, fmt='(a,t50,a)'   ) 'Periodic Boundary Conitions:',       "False" 
+     WRITE ( unit=output_unit, fmt='(a,t50,a)'   ) 'Periodic Boundary Conditions:',       "False" 
     end if
     WRITE ( unit=output_unit, fmt='(a,t20,a)'   ) 'Input File:',          inputfile
     WRITE ( unit=output_unit, fmt='(a,t20,a)'   ) 'Train Set:',          trim(adjustl(folder)) // "/"//  outputfile 

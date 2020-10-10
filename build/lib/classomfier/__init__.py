@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Sat Sep 19 05:09:25 2020
-
-@author: javi
+@author: Javier F. Troncoso, October 2020.
+        Contact: javierfdeztroncoso@gmail.com
 """
 
 
@@ -13,7 +10,7 @@ import sys
 import glob
 import shlex
 import pkg_resources
-from . import bin
+import shutil
 
 class ClasSOMfier:
     """
@@ -49,7 +46,7 @@ class ClasSOMfier:
     def __init__(self,latpar,outputs,lammpsoutput,border=False,useexisting=False,epochs=100,
                  learning_rate=0.5,sigma=1.0,traininput="inputdata.dat",
                  trainedoutput="output.xyz",directory="",compilegf=True,pbc=True,
-                 usemass=False,useenergy=True):
+                 usemass=False,useenergy=True,usenomatrix=False):
         """
         Initialize model parameters
 
@@ -86,6 +83,11 @@ class ClasSOMfier:
             If True, masses are considered in the training. The default is False.
         useenergy : boolean, optional
             If True, energies per atom are considered in the training. The default is True.
+        usenomatrix : boolean, optional
+            If True, no matrices are used to train the neural. As a consecuence, simulations can take a long time.
+            The use of large matrices depends on the capacity of the computer. If the number of atoms is too large
+              (>11000 approx.), matrices cannot be used.
+            The default is True.
 
         Returns
         -------
@@ -108,6 +110,7 @@ class ClasSOMfier:
         self.learning_rate=learning_rate
         self.sigma=sigma
         self.compilegf=compilegf
+        self.usenomatrix=usenomatrix
     
         self.dash='------------------------------------------------------'
         
@@ -145,9 +148,6 @@ class ClasSOMfier:
         None.
 
         """
-        try:
-            subprocess.run("rm -f "+self.directory+"/classifier >> /dev/null")
-        except FileNotFoundError:pass
         if not os.path.exists(self.directory):
             os.makedirs(self.directory)
         else:
@@ -182,21 +182,35 @@ class ClasSOMfier:
         None.
 
         """
-        code=str(pkg_resources.resource_string("classomfier.bin", 'classomfier.f90').decode("utf-8"))
+        if not self.usenomatrix:
+            with open(self.lammpsoutput) as f:
+                 atoms = sum(1 for _ in f)-9
+            if atoms>10000:
+                print(self.dash)
+                print("WARNING: The number of atoms is large. ")
+                print("WARNING: This may result in a future ERROR after the creation of large matrices.")
+                print("WARNING: Consider the use of the option: usenomatrix=True.")
+                print(self.dash)
+            code=str(pkg_resources.resource_string("classomfier.bin", 'classomfier.f90').decode("utf-8"))
+        else:
+            code=str(pkg_resources.resource_string("classomfier.bin", 'nomatrix.f90').decode("utf-8"))
         try:
-            #subprocess.run("cp "+self.lammpsoutput+" tmp.dat", shell=True, check=True)
+            if self.usenomatrix:
+               shutil.copy(self.lammpsoutput,"tmp.dat")
             tmpfile="__tmpfotran.f90"
             filetmp=open(tmpfile,"w")
             filetmp.write(code)
+            filetmp.close()
+            if os.path.exists(self.directory+"/ClasSOMfier"):
+                os.remove(self.directory+"/ClasSOMfier")
             subprocess.run("gfortran -mcmodel=large -Werror=line-truncation -w \
                            -o "+self.directory+"/ClasSOMfier  "+tmpfile, shell=True, check=True)
-            filetmp.close()
-            os.remove(tmpfile)
+            if os.path.exists(tmpfile):
+                os.remove(tmpfile)
         except subprocess.CalledProcessError:
             print(self.dash)
             print("ERROR: Compilation failure.")
             print(self.dash)
-            os.remove(tmpfile)
             sys.exit(0)       
     
     def run_fortran(self):
@@ -208,6 +222,11 @@ class ClasSOMfier:
         None.
 
         """
+        if self.usenomatrix:
+            print(self.dash)
+            print("WARNING: The option 'usenomatrix' is activated. ")
+            print("WARNING: Depending on the number of atoms, this run might take a long time.")
+            print(self.dash)
         try:
             command=self.directory+"/ClasSOMfier "+str(self.useexisting)+         \
                            " "+str(self.latpar)+" "+str(self.outputs)+" "+       \
@@ -219,9 +238,14 @@ class ClasSOMfier:
             subprocess.run(command, shell=True, check=True)
         except subprocess.CalledProcessError:
             print(self.dash)
-            print("ERROR: Process failed. Please, check if input files exist.")
+            print("ERROR: Process failed. Please, check if input files exist or their format is right.")
             print(self.dash)
             sys.exit(0)
+        if self.usenomatrix:
+            if os.path.exists("tmp.dat"):
+                    os.remove("tmp.dat")
+            if os.path.exists("tmpdes.dat"):
+                    os.remove("tmpdes.dat")
                
     def execute(self):
         """
@@ -237,10 +261,9 @@ class ClasSOMfier:
 
         """
         self.create_directory()
-        if not os.path.exists(self.directory+"/ClasSOMfier"):
-            self.check_compiler()
-            self.compile_fortran()
         self.check_repository()
+        self.check_compiler()
+        self.compile_fortran()
         self.run_fortran()
         
     def check_repository(self):
@@ -288,7 +311,7 @@ class ClasSOMfier:
             contents = "".join(contents)
             file.write(contents)
             file.close()
-            subprocess.run("cp "+filename+" "+self.directory+"/data/_"+filename.split("/")[-1], shell=True, check=True)
+            shutil.copy(filename,self.directory+"/data/_"+filename.split("/")[-1])
         for filename in positionfiles:
             rows=sum(1 for line in open(filename))-3
             file = open(filename, "r")

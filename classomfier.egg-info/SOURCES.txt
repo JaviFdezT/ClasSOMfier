@@ -1,5 +1,5 @@
 MANIFEST.in
-README.txt
+README.md
 setup.py
 classomfier/__init__.py
 classomfier.egg-info/PKG-INFO

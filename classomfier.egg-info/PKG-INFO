@@ -1,26 +1,42 @@
-Metadata-Version: 1.0
+Metadata-Version: 2.1
 Name: classomfier
-Version: 0.1
+Version: 0.2
 Summary: ClasSOMfier: A neural network for cluster analysis and detection of lattice defects
 Home-page: https://github.com/JaviFdezT/ClasSOMfier
 Author: Javier F. Troncoso
 Author-email: javierfdeztroncoso@gmail.com
 License: LICENSE.txt
-Description: ClasSOMfier: A neural network for cluster analysis and detection of lattice defects
+Download-URL: https://github.com/JaviFdezT/ClasSOMfier/archive/0.2.tar.gz
+Description: # ClasSOMfier: A neural network for cluster analysis and detection of lattice defects
         
         
-            Class that classifies atoms according to their environment.
+            Kohonen network that classifies atoms according to their environment.
             Unsupervised training using a 1-dimensional Self Organizing Map (SOM) in Fortran.
             
             Created by Javier F. Troncoso, October 2020.
                 Contact: javierfdeztroncoso@gmail.com
         
+        
+          #   Installation:
             
-            USE:
+              Option 1 (preferred):
+                Use pip for Python3:
+                    $ pip install classomfier
+                    
+              Option 2:
+                Download the source code and build the package. Follow the instructions in file "install.sh". 
+            
+              Not tested on MacOs X and Windows. 
+           
+          #   Use:
                 
-                The network and its parameters can be initialized using the following commans:
+                The network and its parameters can be initialized using the following command:
+                    >>from classomfier import ClasSOMfier
                     >>nn=ClasSOMfier(6.43718,2,"dump1000.file")
                 Only 3 parameters are necessary: characteristic length, number of clusters and input file.
+                The number of epochs, the name of the output files and other parameters are optional. If the 
+                number of atoms is large (>12000 approx), the option 'usenomatrix=True' has to be used. When
+                this option is activated, the total running time increases considerably.
                 The format of the input file is that provided by the dump command in LAMMPS:
                     #compute         peratom all pe/atom
                     #dump            dumpid2 all custom 1000 dump*.file id mass x y z c_peratom
@@ -28,10 +44,30 @@ Description: ClasSOMfier: A neural network for cluster analysis and detection of
                     
                 The network is trained using the following command:
                     >>nn.execute()
-                The final condigurations are written in ./data (default value) and can be easily read by Ovito.
+                The final condigurations are written in ./data (default value) and can be easily read by Ovito. 
+                These files includes xyz files for the atoms of each cluster and all atoms, and input files 
+                with the set of input values for each cluster.
+                
                     
-                The final configuration can be postprocessed so that it can be used again to find subcategories
-                inside a specific category:
+                The final configurations can be postprocessed to find subcategories inside a specific category:
                     >>nn.postprocess_output()
+                Afer this, the atoms of one of the clusters can be used to find subcategories:
+                    >>nn=ClasSOMfier(6.43718,2,"data/positions2.xyz",traininput="_trainset2.dat",useexisting=True)   
+                    >>nn.execute()
+                Where "data/positions2.xyz" is the file containing the positions of the atoms in group 2 and 
+                "_trainset2.dat" contains the description of the local environments of the atoms in that group. 
+                As a result, these atoms will be classified and the final condigurations are written in 
+                "./data/data" (default value).
         
+                Input files in classomfier/test can be used as examples.
+                
+              
+          #   Future Work:
+                
+                -Improve the performance for large systems.
+                
+              In the case of doubts or problems, all questions are welcome. Open to new collaborations.
+        
+Keywords: kohonen,neural,network,cluster,analysis
 Platform: UNKNOWN
+Description-Content-Type: text/markdown
