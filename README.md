@@ -31,19 +31,20 @@
         The network is trained using the following command:
             >>nn.execute()
         The final condigurations are written in ./data (default value) and can be easily read by Ovito. 
-        These files includes xyz files for the atoms of each cluster and all atoms, and input files with the 
-       set of input values for each cluster.
+        These files includes xyz files for the atoms of each cluster and all atoms, and input files 
+       with the set of input values for each cluster.
         
             
         The final configurations can be postprocessed so that they can be used again to find subcategories
-        inside a specific category:
+       inside a specific category:
             >>nn.postprocess_output()
         Afer this, the atoms of one of the clusters can be used to find subcategories:
             >>nn=ClasSOMfier(6.43718,2,"data/positions2.xyz",traininput="_trainset2.dat",useexisting=True)   
             >>nn.execute()
-        Where "data/positions2.xyz" is the file containing the positions of the atoms in group 2 and "_trainset2.dat"
-       contains the description of the local environments of the atoms in that group. As a result, these atoms will be 
-       classified and the final condigurations are written in ./data/data (default value).
+        Where "data/positions2.xyz" is the file containing the positions of the atoms in group 2 and 
+       "_trainset2.dat" contains the description of the local environments of the atoms in that group. As 
+       a result, these atoms will be classified and the final condigurations are written in ./data/data 
+       (default value).
         
       
   #   Future Work:
