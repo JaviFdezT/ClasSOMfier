@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Sat Sep 19 05:09:25 2020
-
-@author: javi
+@author: Javier F. Troncoso, October 2020.
+        Contact: javierfdeztroncoso@gmail.com
 """
 
 
