@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
    name='classomfier',
-   version='0.01',
+   version='0.1',
    author='Javier F. Troncoso',
    author_email='javierfdeztroncoso@gmail.com',
    packages=['classomfier', 'classomfier.test','classomfier.bin'],
