@@ -1,0 +1,10 @@
+MANIFEST.in
+README.txt
+setup.py
+classomfier/__init__.py
+classomfier.egg-info/PKG-INFO
+classomfier.egg-info/SOURCES.txt
+classomfier.egg-info/dependency_links.txt
+classomfier.egg-info/top_level.txt
+classomfier/bin/__init__.py
+classomfier/test/__init__.py
